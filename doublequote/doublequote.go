@@ -22,18 +22,27 @@ func PurifyDq(f *os.File) {
 	// isDQ := false
 	// `"`
 	// "`"
-	skip := false
+	// skip := false
 	replacement := 0
+	comment := ``
 	for idx, v := range byt {
-		if skip {
+		if comment == `single` {
 			if v == '\n' {
-				skip = false
+				comment = ``
+			}
+			continue
+		} else if comment == `multi` {
+			if v == '*' && byt[idx+1] == '/' {
+				comment = ``
 			}
 			continue
 		}
 		if openingDq == 0 && openingGa == 0 && v == '/' {
-			if byt[idx+1] == '/' {
-				skip = true
+			switch byt[idx+1] {
+			case '/':
+				comment = `single`
+			case '*':
+				comment = `multi`
 			}
 		}
 
